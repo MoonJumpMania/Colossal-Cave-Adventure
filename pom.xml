@@ -14,7 +14,7 @@ execute: mvn exec:java
 
     <modelVersion>4.0.0</modelVersion> <!--Maven version number (set to 4.0.0)-->
     <groupId>org.example</groupId> <!--ID for the group this project is part of-->
-    <artifactId>HelloWorld</artifactId> <!--ID for the project itself-->
+    <artifactId>Adventure</artifactId> <!--ID for the project itself-->
     <version>1.0</version> <!--project version number-->
 
     <!--"properties" is where you assign additional properties to the project-->
