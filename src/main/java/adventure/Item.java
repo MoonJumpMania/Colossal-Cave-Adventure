@@ -35,7 +35,7 @@ public class Item{
 
     @Override
     public String toString(){
-        return String.format("Name: %s\nDescription: %s\n",
+        return String.format("%s:\n%s\n",
                 this.name,
                 this.description);
     }
