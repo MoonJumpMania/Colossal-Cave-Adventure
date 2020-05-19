@@ -12,12 +12,12 @@ public final class Item{
         return this.name;
     }
 
-    public void setName(String name){
-        this.name = name;
+    public void setName(String n){
+        this.name = n;
     }
 
-    public void setDescription(String description){
-        this.description = description;
+    public void setDescription(String d){
+        this.description = d;
     }
 
     public String getDescription(){
@@ -29,21 +29,21 @@ public final class Item{
         return this.room;
     }
 
-    public void setRoom(Room room){
-        this.room = room;
-    }
-
-    // For printing in Adventure.java
-    @Override
-    public String toString(){
-        return String.format("%s:\n%s\n", this.name, this.description);
+    public void setRoom(Room r){
+        this.room = r;
     }
 
     public long getId(){
         return id;
     }
 
-    public void setId(long id){
-        this.id = id;
+    public void setId(long i){
+        this.id = i;
+    }
+
+    // For printing in Adventure.java
+    @Override
+    public String toString(){
+        return String.format("%s:\n%s\n", this.name, this.description);
     }
 }

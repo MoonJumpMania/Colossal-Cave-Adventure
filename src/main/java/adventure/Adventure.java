@@ -28,8 +28,8 @@ public final class Adventure{
         return currentRoom.getLongDescription();
     }
 
-    public void setCurrentRoom(Room currentRoom){
-        this.currentRoom = currentRoom;
+    public void setCurrentRoom(Room room){
+        this.currentRoom = room;
     }
 
     public Room getCurrentRoom(){
@@ -47,8 +47,7 @@ public final class Adventure{
     // Returns the chosen room
     public Room getRoomFromID(long id){
         for (Room room : roomList){
-            if (room.getId() == id)
-            {
+            if (room.getId() == id){
                 return room;
             }
         }
@@ -57,5 +56,19 @@ public final class Adventure{
 
     public ArrayList<Item> getItemList(){
         return this.itemList;
+    }
+
+    // Finds
+    public Item copyItem(long id){
+        Item newItem = new Item();
+        for (Item item : itemList){
+            if (item.getId() == id){
+                newItem.setId(id);
+                newItem.setDescription(item.getDescription());
+                newItem.setName(item.getName());
+                return item;
+            }
+        }
+        return null;
     }
 }
