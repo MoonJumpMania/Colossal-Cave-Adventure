@@ -1,20 +1,22 @@
 package adventure;
+import java.util.ArrayList;
 
-import java.util.*;
-
-public class Room{
+public final class Room{
     /* you will need to add some private member variables */
-    private ArrayList<Item> itemList = new ArrayList<Item>();
+    private ArrayList<Item> itemList = new ArrayList<>();
+    private Adventure adventure;
 
-    private Room north;
-    private Room south;
-    private Room east;
-    private Room west;
+    // Neighbors ID
+    private long north = 0;
+    private long south = 0;
+    private long east = 0;
+    private long west = 0;
 
     private String name;
-    private String description;
+    private String longDescription;
+    private String shortDescription;
 
-    private int id;
+    private long id;
 
     /* required public methods */
 
@@ -23,53 +25,106 @@ public class Room{
         return this.itemList;
     }
 
+    // Getters and setters
     public String getName(){
         return this.name;
     }
 
-    public void setName(String name) {
+    public String getLongDescription(){
+        return this.longDescription;
+    }
+
+    public long getId(){
+        return this.id;
+    }
+
+    public String getShortDescription(){
+        return shortDescription;
+    }
+
+    public void setLongDescription(String longDescription){
+        this.longDescription = longDescription;
+    }
+
+    public void setShortDescription(String shortDescription){
+        this.shortDescription = shortDescription;
+    }
+
+    public void setName(String name){
         this.name = name;
     }
 
-    public String getLongDescription(){
-        return this.description;
+    public void setNorth(long north){
+        this.north = north;
     }
 
-    public int getId() {
-        return id;
+    public void setSouth(long south){
+        this.south = south;
     }
 
-    public void setId(int id) {
+    public void setEast(long east){
+        this.east = east;
+    }
+
+    public void setWest(long west){
+        this.west = west;
+    }
+
+    public void setId(long id){
         this.id = id;
     }
 
-    public Room getConnectedRoom(String direction) {
-        Room connectedRoom;
+    public Room getConnectedRoom(String direction){
+        Room connectedRoom = null;
 
         switch (direction.charAt(0)){
             case 'n':
-                connectedRoom = this.north;
+                connectedRoom = adventure.getRoomFromID(this.north);
                 break;
             case 's':
-                connectedRoom = this.south;
+                connectedRoom = adventure.getRoomFromID(this.south);
                 break;
             case 'e':
-                connectedRoom = this.east;
+                connectedRoom = adventure.getRoomFromID(this.east);
                 break;
             case 'w':
-                connectedRoom = this.west;
-                break;
-            default:
-                connectedRoom = null;
+                connectedRoom = adventure.getRoomFromID(this.west);
                 break;
         }
 
         return connectedRoom;
     }
 
-    /* you may wish to add some helper methods*/
+    // Returns an item with a designated name
+    public Item getItemFromName(String name){
+        for (Item item : itemList){
+            if (item.getName() == name){
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public void setEntrance(String direction, long room){
+        switch (direction.toLowerCase().charAt(0)){
+            case 'n':
+                this.setNorth(room);
+            case 's':
+                this.setSouth(room);
+            case 'e':
+                this.setEast(room);
+            case 'w':
+                this.setWest(room);
+        }
+    }
+
+    // toString for listing methods in Adventure.java
     @Override
     public String toString(){
-        return String.format("%s:\n%s\n", this.name, this.description);
+        return String.format("%s:\n%s\n", this.name, this.longDescription);
+    }
+
+    public void setAdventure(Adventure adventure){
+        this.adventure = adventure;
     }
 }

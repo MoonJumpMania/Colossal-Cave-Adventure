@@ -1,10 +1,10 @@
 package adventure;
 
-public class Item{
-    /* you will need to add some private member variables */
+public final class Item{
     private String name;
     private String description;
     private Room room;
+    private long id;
 
     /* required public methods */
 
@@ -12,16 +12,16 @@ public class Item{
         return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(String name){
         this.name = name;
     }
 
-    public String getLongDescription(){
-        return this.description;
+    public void setDescription(String description){
+        this.description = description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getDescription(){
+        return this.description;
     }
 
     public Room getContainingRoom(){
@@ -29,16 +29,21 @@ public class Item{
         return this.room;
     }
 
-    public void setRoom(Room room) {
+    public void setRoom(Room room){
         this.room = room;
     }
 
+    // For printing in Adventure.java
     @Override
     public String toString(){
-        return String.format("%s:\n%s\n",
-                this.name,
-                this.description);
+        return String.format("%s:\n%s\n", this.name, this.description);
     }
 
-    /* you may wish to add some helper methods*/
+    public long getId(){
+        return id;
+    }
+
+    public void setId(long id){
+        this.id = id;
+    }
 }
