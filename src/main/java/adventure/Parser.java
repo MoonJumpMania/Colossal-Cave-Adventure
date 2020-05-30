@@ -49,4 +49,8 @@ public class Parser {
 
         return "src/main/resources/default.json";
     }
+
+    public String getLine() {
+        return scanner.nextLine();
+    }
 }

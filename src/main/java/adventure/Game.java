@@ -16,8 +16,17 @@ public final class Game {
      */
     public static void main(String[] args) {
         Game theGame = new Game();
-        Command nextCommand = null;
         theGame.adventure = theGame.compileAdventure(args);
+        Boolean isQuit = true;
+
+        do {
+            isQuit =  theGame.followCommand(theGame.getInputCommand());
+            if (isQuit == null) {
+                System.out.println("Invalid command.");
+            }
+        } while (isQuit == false);
+
+        System.out.println("Thanks for playing!");
     }
 
     /**
@@ -63,10 +72,10 @@ public final class Game {
 
     // Follows the command from user input
     // Returns false if player wants to quit
-    private boolean followCommand(Command command) {
+    private Boolean followCommand(Command command) {
         switch (command.getActionWord()) {
             case "go":
-                adventure.movePlayer(command);
+                adventure.movePlayer(command.getNoun());
                 break;
             case "look":
                 System.out.println(adventure.lookAt(command.getNoun()));
@@ -79,12 +88,22 @@ public final class Game {
                 break;
             case "quit":
                 return false;
+            default:
+                return null;
         }
         return true;
     }
 
+    private Command getInputCommand() {
+        try {
+            return parser.parseUserInput(parser.getLine());
+        } catch (InvalidCommandException e) {
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
-
+        return null;
     }
 }

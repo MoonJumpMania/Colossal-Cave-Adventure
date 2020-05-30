@@ -106,6 +106,10 @@ public class Adventure {
         return null;
     }
 
+    /**
+     * Moves the player to another room.
+     * @param direction Direction of the next room.
+     */
     public void movePlayer(String direction) {
          Room newRoom = getCurrentRoom().getConnectedRoom(direction);
 
@@ -115,17 +119,26 @@ public class Adventure {
          }
     }
 
+    /**
+     * Look at a specified item or looks around the room.
+     * @param itemName Name of the item to look at or null.
+     * @return Description of specified item or description of the room.
+     */
     public String lookAt(String itemName) {
         if (itemName != null) {
             return lookAtItem(itemName);
         } else {
-            return lookAround();
+            return lookAtCurrentRoom();
         }
     }
 
+    /**
+     * Looks at the inventory of the player.
+     * @return A description of the player's inventory.
+     */
     public String checkInventory() {
         if (player1.getInventory().size() == 0) {
-            return "Player1's inventory is empty.";
+            return player1.getName() + "'s inventory is empty.";
         }
 
         String output = "Player1's Inventory:";
@@ -139,10 +152,11 @@ public class Adventure {
      * Takes an item from a room and places it into the player's inventory.
      * @param itemName
      */
-    public void takeItem(String itemName) {
+    public String takeItem(String itemName) {
         Item item = getItem(itemName);
-        player1.getCurrentRoom().getItemList().remove(item);
+        getCurrentRoom().getItemList().remove(item);
         player1.pickItem(item);
+        return "You grabbed a " + itemName;
     }
 
     /* Private functions  */
@@ -157,10 +171,12 @@ public class Adventure {
         return null;
     }
 
-    private String lookAround() {
+    // Looks at the contents of the current room
+    private String lookAtCurrentRoom() {
         return getCurrentRoom().toString();
     }
 
+    // Reads the toString method of a specified item
     private String lookAtItem(String itemName) {
         Item item = getItem(itemName);
         if (item != null) {
@@ -170,6 +186,7 @@ public class Adventure {
         }
     }
 
+    // Adds rooms to the roomList from the JSON file
     private void setRoomList(JSONArray roomObjs) {
         for (Object object:roomObjs) {
             JSONObject roomJSON = (JSONObject) object;
@@ -181,6 +198,7 @@ public class Adventure {
         }
     }
 
+    // Adds items to the itemList from the JSON file
     private void setItemList(JSONArray itemJSONArray) {
         for (Object object:itemJSONArray) {
             JSONObject itemJSON = (JSONObject) object;
