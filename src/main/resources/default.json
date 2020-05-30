@@ -1,0 +1,71 @@
+{
+  "adventure": {
+    "room": [
+      {
+        "id": 100,
+        "start": "true",
+        "name": "center",
+        "short_description": "Center of map",
+        "long_description": "This is the center of this adventure",
+        "entrance": [
+          {
+            "id": 101,
+            "dir": "N"
+          },
+          {
+            "id": 102,
+            "dir": "E"
+          },
+          {
+            "id": 103,
+            "dir": "S"
+          },
+          {
+            "id": 104,
+            "dir": "W"
+          }
+        ]
+      },
+      {
+        "id": 101,
+        "start": "true",
+        "name": "north",
+        "short_description": "North of center",
+        "long_description": "This is the northern part of the map",
+        "entrance": [
+          {
+            "id": 100,
+            "dir": "S"
+          }
+        ],
+        "loot": [
+          {
+            "id": 0
+          }
+        ]
+      }
+    ],
+    "item": [
+      {
+        "id": 1,
+        "name": "stick",
+        "desc": "just a stick"
+      },
+      {
+        "id": 2,
+        "name": "stone",
+        "desc": "just a stone"
+      },
+      {
+        "id": 3,
+        "name": "slimeball",
+        "desc": "it's really sticky"
+      },
+      {
+        "id": 4,
+        "name": "key",
+        "desc": "can open a door"
+      }
+    ]
+  }
+}
