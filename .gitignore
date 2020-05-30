@@ -42,7 +42,7 @@ Thumbs.db
 .settings
 .classpath
 .project
-Adventure.iml
+*.iml
 
 # Other miscellaneous folders #
 ###############################

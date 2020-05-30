@@ -35,13 +35,6 @@ public class Adventure {
         setItemList((JSONArray) advJSON.get("item"));
     }
 
-    private void setItemList(JSONArray itemJSONArray) {
-        for (Object object:itemJSONArray) {
-            JSONObject itemJSON = (JSONObject) object;
-            itemList.add(new Item(this, null, itemJSON));
-        }
-    }
-
     /**
      * Sets new room for the player.
      * @param room Room the player is in.
@@ -185,6 +178,13 @@ public class Adventure {
             if (roomJSON.get("start").equals("true")) {
                 player1.setCurrentRoom(newRoom);
             }
+        }
+    }
+
+    private void setItemList(JSONArray itemJSONArray) {
+        for (Object object:itemJSONArray) {
+            JSONObject itemJSON = (JSONObject) object;
+            itemList.add(new Item(this, null, itemJSON));
         }
     }
 }
