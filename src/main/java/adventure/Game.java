@@ -1,10 +1,8 @@
 package adventure;
-import java.awt.geom.AffineTransform;
-import java.io.FileReader;
-import java.util.Scanner;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
 public final class Game {
@@ -16,32 +14,33 @@ public final class Game {
      */
     public static void main(String[] args) {
         Game theGame = new Game();
-        theGame.adventure = theGame.compileAdventure(args);
-        Boolean isQuit = true;
-
+        Boolean isQuit; // Checks if the player wants to quit
+        theGame.setAdventure(args); // Creates adventure
+        String playerName = theGame.promptUsername();
+        if (theGame.adventure == null) {
+            System.out.println("Adventure Error.");
+            return;
+        }
         do {
-            isQuit =  theGame.followCommand(theGame.getInputCommand());
+            System.out.println(theGame.adventure.getCurrentRoom());
+            isQuit = theGame.followCommand(theGame.getInputCommand());
             if (isQuit == null) {
                 System.out.println("Invalid command.");
             }
-        } while (isQuit == false);
-
-        System.out.println("Thanks for playing!");
+        } while (isQuit != true);
+        theGame.promptSave();
     }
 
     /**
-     * @param filename name of json file
-     * @return JSONObject of entire adventure
+     * @param inputStream File input stream.
+     * @return JSONObject of entire adventure.
      */
-    public JSONObject loadAdventureJson(String filename) {
-        JSONObject jsonObject;
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))){
-            jsonObject = (JSONObject) new JSONParser().parse(reader);
+    public JSONObject loadAdventureJson(InputStream inputStream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
+            return (JSONObject) new JSONParser().parse(reader);
         } catch (Exception e) {
-            System.out.println("File not found. Please try again.");
-            jsonObject = null;
+            return null;
         }
-        return jsonObject;
     }
 
     /**
@@ -50,29 +49,28 @@ public final class Game {
      * @return parsed adventure
      */
     public Adventure generateAdventure(JSONObject obj) {
+        if (obj == null) {
+            return null;
+        }
+        System.out.println(obj);
         return new Adventure((JSONObject) obj.get("adventure"));
     }
 
     // Private methods
 
     // Combination of both loadAdventureJson() and generateAdventure()
-    private Adventure compileAdventure(String[] args) {
-        return generateAdventure(loadAdventureJson(getFilename(args)));
-    }
-
-    // Calls the parseUserInput method from the Parser class
-    private Command parse(String input) throws InvalidCommandException {
-        return parser.parseUserInput(input);
+    public void setAdventure(String[] args) {
+        adventure =  generateAdventure(loadAdventureJson(getInputStream(args)));
     }
 
     // Calls the getFilename method from the Parser class
-    private String getFilename(String[] args) {
-        return parser.getFilename(args);
+    private InputStream getInputStream(String[] args) {
+        return parser.getInputStream(args);
     }
 
     // Follows the command from user input
     // Returns false if player wants to quit
-    private Boolean followCommand(Command command) {
+    private boolean followCommand(Command command) {
         switch (command.getActionWord()) {
             case "go":
                 adventure.movePlayer(command.getNoun());
@@ -88,8 +86,6 @@ public final class Game {
                 break;
             case "quit":
                 return false;
-            default:
-                return null;
         }
         return true;
     }
@@ -100,6 +96,19 @@ public final class Game {
         } catch (InvalidCommandException e) {
             return null;
         }
+    }
+
+    private String promptUsername() {
+        System.out.println("What is your name?");
+        String name = parser.getLine();
+        System.out.printf("Your name is %s.\n", name);
+        return name;
+    }
+
+    private void promptSave() {
+        System.out.printf("Would you like to save?");
+        parser.getLine();
+
     }
 
     @Override

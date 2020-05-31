@@ -20,6 +20,17 @@ public class Item {
     }
 
     /**
+     * Constructor for item templates
+     * @param itemJSON JSON subclass of Adventure.
+     */
+    public Item(JSONObject itemJSON) {
+        name = (String) itemJSON.get("name");
+        description = (String) itemJSON.get("desc");
+        id = (long) itemJSON.get("id");
+    }
+
+    /**
+     * Constructor for items that belong to a room.
      * @param advObj adventure instance
      * @param roomObj room containing this instance
      * @param itemJSON json with information for this instance
@@ -34,31 +45,29 @@ public class Item {
      * @param item usually the template held in the adventure item list
      */
     private Item(Item item) {
-        currentAdventure = item.currentAdventure;
         name = item.name;
         description = item.description;
-        containingRoom = item.containingRoom;
         id = item.id;
     }
 
     /* required public methods */
 
     /**
-     * @return name of instance
+     * @return Name of this item.
      */
     public String getName(){
         return name;
     }
 
     /**
-     * @return description of instance
+     * @return The description of this item.
      */
     public String getLongDescription(){
         return description;
     }
 
     /**
-     * @return room containing instance
+     * @return Room containing this item.
      */
     public Room getContainingRoom() {
         //returns a reference to the room that contains the item
@@ -66,7 +75,7 @@ public class Item {
     }
 
     /**
-     * @return id of instance
+     * @return ID of this item.
      */
     public long getID() {
         return id;

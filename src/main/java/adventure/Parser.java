@@ -1,4 +1,5 @@
 package adventure;
+import java.io.InputStream;
 import java.util.Scanner;
 
 /**
@@ -34,20 +35,28 @@ public class Parser {
     }
 
     /**
-     * @param args arguments from command line
-     * @return filename
+     * Gets the InputStream from command line arguments.
+     * @param args Arguments from command line.
+     * @return InputStream to the file
      */
-    public String getFilename(String[] args) {
+    public InputStream getInputStream(String[] args) {
+        String stream = new String();
         if (args.length >= 2) {
             switch (args[0]) {
                 case "-l":
                     // TODO: 5/25/2020
+                    break;
                 case "-a":
-                    return args[1];
+                    stream = args[1];
+                    break;
             }
+        } else {
+            stream = "/src/main/resources/default.json";
         }
 
-        return "src/main/resources/default.json";
+        InputStream steam = Parser.class.getClassLoader().getResourceAsStream(stream);
+        System.out.printf(String.valueOf(steam));
+        return steam;
     }
 
     public String getLine() {

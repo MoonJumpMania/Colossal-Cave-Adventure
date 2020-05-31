@@ -31,8 +31,13 @@ public class Adventure {
      * @param advJSON sets the adventure from the adventure json
      */
     public Adventure(JSONObject advJSON) {
-        setRoomList((JSONArray) advJSON.get("room"));
+        this();
         setItemList((JSONArray) advJSON.get("item"));
+        setRoomList((JSONArray) advJSON.get("room"));
+
+        for (Room room:roomList) {
+            room.setEntrances();
+        }
     }
 
     /**
@@ -84,9 +89,11 @@ public class Adventure {
      * @return room from list with given id
      */
     public Room getRoomFromID(long id) {
-        for (Room room:roomList) {
-            if (id == room.getID()) {
-                return room;
+        if (roomList != null) {
+            for (Room room : roomList) {
+                if (id == room.getID()) {
+                    return room;
+                }
             }
         }
         return null;
@@ -98,9 +105,11 @@ public class Adventure {
      * @return Returns the item from the itemList with the specified ID.
      */
     public Item getItemFromID(long id) {
-        for (Item item:itemList) {
-            if (id == item.getID()) {
-                return item;
+        if (itemList != null) {
+            for (Item item : itemList) {
+                if (id == item.getID()) {
+                    return item;
+                }
             }
         }
         return null;
@@ -159,10 +168,28 @@ public class Adventure {
         return "You grabbed a " + itemName;
     }
 
-    /* Private functions  */
+    // Adds rooms to the roomList from the JSON file
+    public void setRoomList(JSONArray roomArray) {
+        for (Object object:roomArray) {
+            JSONObject roomJSON = (JSONObject) object;
+            Room newRoom = new Room(this, roomJSON);
+            roomList.add(newRoom);
+            if (roomJSON.get("start") != null) {
+                player1.setCurrentRoom(newRoom);
+            }
+        }
+    }
+
+    // Adds items to the itemList from the JSON file
+    public void setItemList(JSONArray itemJSONArray) {
+        for (Object object:itemJSONArray) {
+            JSONObject itemJSON = (JSONObject) object;
+            itemList.add(new Item(itemJSON));
+        }
+    }
 
     // Gets an item by specifying its name
-    private Item getItem(String itemName) {
+    public Item getItem(String itemName) {
         for (Item item:getCurrentRoom().getItemList()) {
             if (item.getName().equals(itemName)) {
                 return item;
@@ -183,26 +210,6 @@ public class Adventure {
             return item.toString();
         } else {
             return "Item not found.";
-        }
-    }
-
-    // Adds rooms to the roomList from the JSON file
-    private void setRoomList(JSONArray roomObjs) {
-        for (Object object:roomObjs) {
-            JSONObject roomJSON = (JSONObject) object;
-            Room newRoom = new Room(this, roomJSON);
-            roomList.add(newRoom);
-            if (roomJSON.get("start").equals("true")) {
-                player1.setCurrentRoom(newRoom);
-            }
-        }
-    }
-
-    // Adds items to the itemList from the JSON file
-    private void setItemList(JSONArray itemJSONArray) {
-        for (Object object:itemJSONArray) {
-            JSONObject itemJSON = (JSONObject) object;
-            itemList.add(new Item(this, null, itemJSON));
         }
     }
 }

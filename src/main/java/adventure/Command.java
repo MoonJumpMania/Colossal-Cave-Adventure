@@ -96,15 +96,10 @@ public class Command {
         return (noun != null);
     }
 
-    private boolean isValidDir(String what) {
-        switch (what) {
-            case "N": case "S": case "E": case "W": case "up": case "down":
-                return true;
-            default:
-                return false;
-        }
-    }
-
+    /**
+     *
+     * @return
+     */
     public String allCommands() {
         String output = "Commands:";
         for (String command:commands) {
@@ -120,5 +115,15 @@ public class Command {
     @Override
     public String toString() {
         return String.format("Action: %s\nNoun: %s", action, noun);
+    }
+
+    // Checks if the given direction is valid
+    private boolean isValidDir(String what) {
+        switch (what) {
+            case "N": case "S": case "E": case "W": case "up": case "down":
+                return true;
+            default:
+                return false;
+        }
     }
 }

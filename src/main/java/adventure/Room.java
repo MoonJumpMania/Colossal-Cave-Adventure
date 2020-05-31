@@ -14,15 +14,17 @@ public class Room {
     private long id;
     private HashMap<String, Room> entrances;
     private ArrayList<Item> itemList;
+    private JSONArray entranceJSON;
+    private JSONArray itemJSON;
 
     /**
      * Default constructor
      */
     public Room() {
         adventure = new Adventure();
-        name = "";
-        shortDescription = "";
-        longDescription = "";
+        name = new String();
+        shortDescription = new String();
+        longDescription = new String();
         entrances = new HashMap<>();
         itemList = new ArrayList<>();
     }
@@ -37,13 +39,14 @@ public class Room {
         shortDescription = (String) roomJSON.get("short_description");
         longDescription = (String) roomJSON.get("long_description");
         id = (long) roomJSON.get("id");
-        this.setEntrances((JSONArray) roomJSON.get("entrance"));
+        entranceJSON = (JSONArray) roomJSON.get("entrance"); // Cannot initialize yet
+        itemJSON = (JSONArray) roomJSON.get("loot");
     }
 
     /* required public methods */
 
     /**
-     * Prints all items in room
+     * Prints all items in room and returns the list of items.
      * @return list of items in this instance
      */
     public ArrayList<Item> listItems(){
@@ -54,24 +57,31 @@ public class Room {
     }
 
     /**
-     * @return name of instance
+     * Returns the name of the room.
+     * @return Name of this room.
      */
     public String getName(){
         return name;
     }
 
     /**
-     * @return short description of instance
+     * Returns the short of this room.
+     * @return The short description of this room.
      */
     public String getShortDescription() {
         return shortDescription;
     }
 
-    /**
-     * @return long description of instance
-     */
     public String getLongDescription(){
         return longDescription;
+    }
+
+    /**
+     * Gets this room's list of items.
+     * @return This room's item list.
+     */
+    public ArrayList<Item> getItemList() {
+        return itemList;
     }
 
     /**
@@ -82,24 +92,26 @@ public class Room {
         return entrances.get(direction);
     }
 
-    /* you may wish to add some helper methods*/
-    private void setEntrances(JSONArray array) {
-        for (Object obj:array) {
-            JSONObject entranceJSON = (JSONObject) obj;
-            entrances.putIfAbsent((String) entranceJSON.get("dir"),
-                    adventure.getRoomFromID((Long) entranceJSON.get("id")));
+    /**
+     * Sets the entrances of room.
+     */
+    public void setEntrances() {
+        for (Object obj: entranceJSON) {
+            JSONObject entranceJSON = (JSONObject) obj ;
+            String key = (String) entranceJSON.get("dir");
+            Room room = adventure.getRoomFromID((Long) entranceJSON.get("id"));
+            entrances.putIfAbsent(key, room);
         }
     }
 
     /**
      * Returns each entrance room that is in the hashmap.
      */
-    public String entrances() {
+    public String getEntrances() {
         AtomicReference<String> output = new AtomicReference<>("");
         // Goes through each hashmap entry and adds their information to the output string.
-        entrances.entrySet().stream().forEach(e -> {
-            output.set(output + e.getKey() + ": " + e.getValue().getName());
-        });
+        entrances.entrySet().stream().forEach(e ->
+                output.set(output + e.getKey() + ": " + e.getValue().getName()));
         return output.get();
     }
 
@@ -111,6 +123,17 @@ public class Room {
     }
 
     /**
+     * Adds items from the JSON file into the array list.
+     */
+    public void setItemList() {
+        for (Object obj:itemJSON) {
+            JSONObject itemJSON = (JSONObject) obj;
+            itemList.add(new Item(adventure, this,itemJSON));
+        }
+    }
+
+    /**
+     * Add item to this room's list of items.
      * @param item Item that will be removed from this room's list.
      */
     public void removeItem(Item item) {
@@ -118,6 +141,7 @@ public class Room {
     }
 
     /**
+     * Remove an item from this room's list of items.
      * @param item Item that will be added to this room's list.
      */
     public void addItem(Item item) {
@@ -140,10 +164,7 @@ public class Room {
         for (Item item:itemList) {
             output = output + "\n" + item;
         }
+        output = output + "\n" + getEntrances();
         return output;
-    }
-
-    public ArrayList<Item> getItemList() {
-        return itemList;
     }
 }
