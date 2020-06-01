@@ -98,8 +98,7 @@ public final class Item implements Serializable {
     public String toString() {
         return String.format("Item Name: %s\n" +
                 "Description: %s\n" +
-                "Containing room: %s\n" +
-                "ID: %s",
-                name, description, containingRoom.getName(), id);
+                "Containing room: %s\n",
+                name, description, containingRoom.getName());
     }
 }

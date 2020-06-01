@@ -1,11 +1,13 @@
 package adventure;
 import java.io.*;
+import java.util.Scanner;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public final class Game {
-    private static final String defaultFileName = "userData.save";
     private final Parser parser = new Parser();
+    private Scanner scanner = new Scanner(System.in);
     private Adventure adventure;
 
     /**
@@ -20,15 +22,15 @@ public final class Game {
             System.exit(-1);
         }
 
-        do {
-            System.out.println(theGame.adventure.getCurrentRoom());
+        while (!isQuit) {
+            System.out.println("\n" + theGame.adventure.getCurrentRoom());
             try {
-                Command command = theGame.getInputCommand();
+                Command command = theGame.getInputCommand(theGame.getLine());
                 isQuit = !theGame.followCommand(command);
             } catch (InvalidCommandException e) {
                 System.out.println("Invalid command.");
             }
-        } while (isQuit == false);
+        }
 
         theGame.promptSave();
     }
@@ -114,9 +116,9 @@ public final class Game {
         return true;
     }
 
-    private Command getInputCommand() throws InvalidCommandException {
+    private Command getInputCommand(String input) throws InvalidCommandException {
         try {
-            return parser.parseUserInput(parser.getLine());
+            return parser.parseUserInput(input);
         } catch (InvalidCommandException e) {
             throw new InvalidCommandException();
         }
@@ -124,37 +126,37 @@ public final class Game {
 
     private String promptUsername() {
         System.out.println("What is your name?");
-        String name = parser.getLine();
-        System.out.printf("Your name is %s.\n\n", name);
+        String name = getLine();
+        System.out.printf("Your name is %s.\n", name);
         return name;
     }
 
+    // Gets line from user input.
+    private String getLine() {
+        return scanner.nextLine();
+    }
+
     private void promptSave() {
-        System.out.printf("Would you like to save? (y/n)");
+        System.out.println("Would you like to save? (y/n)");
         while (true) {
-            String input = parser.getLine();
+            String input = getLine();
             switch (input) {
                 case "n":
                     return;
                 case "y":
                     System.out.println("What would like to name your save file?");
-                    serializeAdventure();
+                    serializeAdventure(getLine());
                     return;
                 default:
-                    System.out.println("Invalid ");
+                    System.out.println("Invalid input. (y/n)");
             }
         }
     }
 
-    // Saves a contents of the game to the file
-    private void save() {
-
-    }
-
     // Creates a save file for the adventure
-    private void serializeAdventure() {
+    private void serializeAdventure(String saveName) {
         try {
-            FileOutputStream outputStream = new FileOutputStream(defaultFileName);
+            FileOutputStream outputStream = new FileOutputStream(saveName);
             ObjectOutputStream outputDest = new ObjectOutputStream(outputStream);
             outputDest.writeObject(adventure);
             outputDest.close();
@@ -166,9 +168,9 @@ public final class Game {
         }
     }
 
-    private Adventure deserializeAdventure(String path) {
-        Adventure adventureObj = null;
-        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(defaultFileName))) {
+    private Adventure deserializeAdventure(String saveName) {
+        Adventure adventureObj;
+        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(saveName))) {
             adventureObj = (Adventure) input.readObject();
 
             System.out.println("Welcome back " + adventureObj.getPlayer().getName() + ".");

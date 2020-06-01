@@ -14,7 +14,7 @@ public final class Player implements Serializable {
      * Default constructor.
      */
     public Player() {
-        this(null, null);
+        this(null);
     }
 
     /**
@@ -22,9 +22,8 @@ public final class Player implements Serializable {
      * @param n Name of player.
      * @param curRoom Current room.
      */
-    public Player(String n, Room curRoom) {
+    public Player(String n) {
         name = n;
-        currentRoom = curRoom;
         inventory = new ArrayList<>();
     }
 

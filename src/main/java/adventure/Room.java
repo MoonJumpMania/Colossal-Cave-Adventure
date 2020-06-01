@@ -189,7 +189,7 @@ public final class Room implements Serializable {
      */
     @Override
     public String toString() {
-        String output = String.format("Room name: %s", name);
+        String output = String.format("You are in: %s", name);
         if (lootList != null) {
            output = output + "\nItems:";
             for (Item item : lootList) {

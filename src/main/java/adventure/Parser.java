@@ -8,37 +8,30 @@ import java.util.Scanner;
 public final class Parser {
     private Scanner scanner;
 
+    /**
+     * Default constructor.
+     */
     public Parser() {
-        scanner = new Scanner(System.in);
-    }
-
-    public Parser(Scanner s) {
-        scanner = s;
     }
 
     /**
      * @throws InvalidCommandException invalid command
      */
     public Command parseUserInput(String input) throws InvalidCommandException {
-        String[] inputs = scanner.nextLine().trim().split(" ", 2);
+        String[] inputs = input.trim().split(" ", 2);
         Command command;
 
         switch (inputs.length) {
             case 1:
                 command = new Command(inputs[0]);
+                break;
             case 2:
                 command = new Command(inputs[0], inputs[1]);
+                break;
             default:
                 command = new Command(null, null);
         }
-        return command;
-    }
 
-    /**
-     * Gets one line from user input.
-     * @return Input from user.
-     */
-    public String getLine() {
-        return scanner.nextLine();
+        return command;
     }
 }

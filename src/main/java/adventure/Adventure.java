@@ -9,9 +9,9 @@ public final class Adventure implements Serializable {
     private static final long serialVersionUID = 7116032258125813447L;
 
     /* you will need to add some private member variables */
-    private ArrayList<Room> roomList;
-    private ArrayList<Item> itemList;
-    private Player player1;
+    private final ArrayList<Room> roomList;
+    private final ArrayList<Item> itemList;
+    private final Player player1;
 
     /* ======== Required public methods ========== */
         /* note,  you don't have to USE all of these
@@ -30,8 +30,11 @@ public final class Adventure implements Serializable {
     /**
      * @param advJSON sets the adventure from the adventure json
      */
-    public Adventure(JSONObject advJSON) {
-        this();
+    public Adventure(String n, JSONObject advJSON) {
+        roomList = new ArrayList<>();
+        itemList = new ArrayList<>();
+        player1 = new Player(n);
+
         setItemList((JSONArray) advJSON.get("item"));
         setRoomList((JSONArray) advJSON.get("room"));
     }
@@ -65,13 +68,6 @@ public final class Adventure implements Serializable {
     }
 
     /**
-     * @return description of the current room
-     */
-    public String getCurrentRoomDescription() {
-        return getCurrentRoom().getShortDescription();
-    }
-
-    /**
      * @return this adventure's current room
      */
     public Room getCurrentRoom() {
@@ -81,47 +77,15 @@ public final class Adventure implements Serializable {
     /* you may wish to add additional methods*/
 
     /**
-     * @param id wanted room's tag
-     * @return room from list with given id
-     */
-    public Room getRoomFromID(long id) {
-        if (roomList != null) {
-            for (Room room : roomList) {
-                if (id == room.getID()) {
-                    return room;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Searches for an item from a specified ID tag.
-     * @param id The wanted item's ID.
-     * @return Returns the item from the itemList with the specified ID.
-     */
-    public Item getItemFromID(long id) {
-        if (itemList != null) {
-            for (Item item : itemList) {
-                if (id == item.getID()) {
-                    return item;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Moves the player to another room.
      * @param direction Direction of the next room.
      */
     public void movePlayer(String direction) {
-         Room newRoom = getCurrentRoom().getConnectedRoom(direction);
-
-         // Only moves if the room is valid
-         if (newRoom != null) {
-             player1.setCurrentRoom(newRoom);
-         }
+        Room newRoom = getCurrentRoom().getConnectedRoom(direction);
+        // Only moves if the room is valid
+        if (newRoom != null) {
+            setCurrentRoom(newRoom);
+        }
     }
 
     /**
@@ -155,11 +119,10 @@ public final class Adventure implements Serializable {
 
     /**
      * Takes an item from a room and places it into the player's inventory.
-     * @param itemName
+     * @param itemName Name of the item to be taken.
      */
     public String takeItem(String itemName) {
         Item item = getItem(itemName);
-        getCurrentRoom().getLootList().remove(item);
         player1.pickItem(item);
         return "You grabbed a " + itemName;
     }
