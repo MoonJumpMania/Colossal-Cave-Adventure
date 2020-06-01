@@ -1,10 +1,12 @@
 package adventure;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player {
-    private final String name;
-    private String saveGameName;
+public final class Player implements Serializable {
+    private static final long serialVersionUID = 3260259094862585L;
+
+    private String name;
     private ArrayList<Item> inventory;
     private Room currentRoom;
 
@@ -56,6 +58,14 @@ public class Player {
      */
     public void setCurrentRoom(Room room) {
         currentRoom = room;
+    }
+
+    /**
+     * Sets the name of this player.
+     * @param playerName Name of the player.
+     */
+    public void setName(String playerName) {
+        name = playerName;
     }
 
     /**

@@ -1,13 +1,13 @@
 package adventure;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * @author Nasif Mauthoor
- * @version A2
- */
-public class Adventure {
+public final class Adventure implements Serializable {
+    private static final long serialVersionUID = 7116032258125813447L;
+
     /* you will need to add some private member variables */
     private ArrayList<Room> roomList;
     private ArrayList<Item> itemList;
@@ -34,10 +34,6 @@ public class Adventure {
         this();
         setItemList((JSONArray) advJSON.get("item"));
         setRoomList((JSONArray) advJSON.get("room"));
-
-        for (Room room:roomList) {
-            room.setEntrances();
-        }
     }
 
     /**
@@ -163,16 +159,19 @@ public class Adventure {
      */
     public String takeItem(String itemName) {
         Item item = getItem(itemName);
-        getCurrentRoom().getItemList().remove(item);
+        getCurrentRoom().getLootList().remove(item);
         player1.pickItem(item);
         return "You grabbed a " + itemName;
     }
 
-    // Adds rooms to the roomList from the JSON file
+    /**
+     * Creates room array list from JSONArray.
+     * @param roomArray JSONArray that contains the information on every room type.
+     */
     public void setRoomList(JSONArray roomArray) {
         for (Object object:roomArray) {
             JSONObject roomJSON = (JSONObject) object;
-            Room newRoom = new Room(this, roomJSON);
+            Room newRoom = new Room(roomList, itemList, roomJSON);
             roomList.add(newRoom);
             if (roomJSON.get("start") != null) {
                 player1.setCurrentRoom(newRoom);
@@ -180,7 +179,10 @@ public class Adventure {
         }
     }
 
-    // Adds items to the itemList from the JSON file
+    /**
+     * Creates item array list from JSONArray.
+     * @param itemJSONArray JSONArray with the information on every item.
+     */
     public void setItemList(JSONArray itemJSONArray) {
         for (Object object:itemJSONArray) {
             JSONObject itemJSON = (JSONObject) object;
@@ -188,9 +190,17 @@ public class Adventure {
         }
     }
 
-    // Gets an item by specifying its name
+    public void setPlayerName(String playerName) {
+        player1.setName(playerName);
+    }
+
+    /**
+     * Gets item by searching its name.
+     * @param itemName Name of the item.
+     * @return The item with the same name.
+     */
     public Item getItem(String itemName) {
-        for (Item item:getCurrentRoom().getItemList()) {
+        for (Item item:getCurrentRoom().getLootList()) {
             if (item.getName().equals(itemName)) {
                 return item;
             }
@@ -200,7 +210,7 @@ public class Adventure {
 
     // Looks at the contents of the current room
     private String lookAtCurrentRoom() {
-        return getCurrentRoom().toString();
+        return getCurrentRoom().getLongDescription() + "\n" + getCurrentRoom().toString();
     }
 
     // Reads the toString method of a specified item
@@ -211,5 +221,14 @@ public class Adventure {
         } else {
             return "Item not found.";
         }
+    }
+
+    @Override
+    public String toString() {
+        return null;
+    }
+
+    public Player getPlayer() {
+        return player1;
     }
 }

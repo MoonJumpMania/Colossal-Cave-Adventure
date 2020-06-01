@@ -1,12 +1,18 @@
 package adventure;
 import org.json.simple.JSONObject;
 
-public class Item {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public final class Item implements Serializable {
+    private static final long serialVersionUID = 465506458325891352L;
+
     private Adventure currentAdventure;
     private String name;
     private String description;
     private Room containingRoom;
     private long id;
+    private ArrayList<Item> adventureItemList;
 
     /**
      * Default constructor
@@ -31,23 +37,26 @@ public class Item {
 
     /**
      * Constructor for items that belong to a room.
-     * @param advObj adventure instance
+     * @param itemList adventure instance
      * @param roomObj room containing this instance
      * @param itemJSON json with information for this instance
      */
-    public Item(Adventure advObj, Room roomObj, JSONObject itemJSON) {
-        this(advObj.getItemFromID((Long) itemJSON.get("id")));
-        currentAdventure = advObj;
+    public Item(ArrayList<Item> itemList, Room roomObj, JSONObject itemJSON) {
         containingRoom = roomObj;
+        id = (long) itemJSON.get("id");
+
+        setItemFromTemplate();
     }
 
     /**
-     * @param item usually the template held in the adventure item list
+     *
      */
-    private Item(Item item) {
-        name = item.name;
-        description = item.description;
-        id = item.id;
+    public void setItemFromTemplate() {
+        for (Item item:adventureItemList) {
+            if (item.id == id) {
+                
+            }
+        }
     }
 
     /* required public methods */

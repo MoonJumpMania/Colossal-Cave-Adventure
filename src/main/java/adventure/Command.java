@@ -8,9 +8,10 @@ You may add other methods to this class if you wish*/
 
 import java.util.ArrayList;
 
-public class Command {
+public final class Command {
     private String action;
     private String noun;
+    private ArrayList<Item> itemList;
 
     /**
      * A List of all valid actions.
@@ -62,6 +63,11 @@ public class Command {
             case "go":
                 return isValidDir(what);
             case "look": case "take":
+                if (what != null) {
+                    if (what.isEmpty()) {
+                        return false;
+                    }
+                }
                 return true;
             case "inventory": case "quit":
                 if (what == null) {

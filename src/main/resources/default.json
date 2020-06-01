@@ -41,7 +41,7 @@
       },
       {
         "id": 101,
-        "name": "north",
+        "name": "North",
         "short_description": "North of center",
         "long_description": "This is the northern part of the map",
         "entrance": [

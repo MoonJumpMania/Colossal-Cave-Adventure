@@ -1,12 +1,11 @@
 package adventure;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public final class Game {
-    private Parser parser = new Parser();
+    private static final String defaultFileName = "userData.save";
+    private final Parser parser = new Parser();
     private Adventure adventure;
 
     /**
@@ -14,58 +13,79 @@ public final class Game {
      */
     public static void main(String[] args) {
         Game theGame = new Game();
-        Boolean isQuit; // Checks if the player wants to quit
+        boolean isQuit = false; // Checks if the player wants to quit
+
         theGame.setAdventure(args); // Creates adventure
         String playerName = theGame.promptUsername();
-        if (theGame.adventure == null) {
-            System.out.println("Adventure Error.");
-            return;
-        }
+        theGame.adventure.setPlayerName(playerName);
+
         do {
             System.out.println(theGame.adventure.getCurrentRoom());
-            isQuit = theGame.followCommand(theGame.getInputCommand());
-            if (isQuit == null) {
+            try {
+                Command command = theGame.getInputCommand();
+                isQuit = !theGame.followCommand(command);
+            } catch (InvalidCommandException e) {
                 System.out.println("Invalid command.");
             }
-        } while (isQuit != true);
+        } while (isQuit == false);
+
         theGame.promptSave();
     }
 
     /**
+     * Loading json from default file in jar.
      * @param inputStream File input stream.
      * @return JSONObject of entire adventure.
      */
     public JSONObject loadAdventureJson(InputStream inputStream) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
+        try (InputStreamReader reader = new InputStreamReader(inputStream)) {
             return (JSONObject) new JSONParser().parse(reader);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }
 
     /**
-     * Generates an adventure from the adventure tag in the game's json
-     * @param obj JSONObject of the adventure
-     * @return parsed adventure
+     * Loading json file from chosen file.
+     * @param input File name.
+     * @return JSONObject of entire adventure.
+     */
+    public JSONObject loadAdventureJson(String input) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
+            return (JSONObject) new JSONParser().parse(reader);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Generates an adventure from the adventure tag in the game's JSON.
+     * @param obj JSONObject of the adventure.
+     * @return The parsed adventure.
      */
     public Adventure generateAdventure(JSONObject obj) {
         if (obj == null) {
             return null;
         }
-        System.out.println(obj);
         return new Adventure((JSONObject) obj.get("adventure"));
     }
 
-    // Private methods
-
-    // Combination of both loadAdventureJson() and generateAdventure()
     public void setAdventure(String[] args) {
-        adventure =  generateAdventure(loadAdventureJson(getInputStream(args)));
-    }
-
-    // Calls the getFilename method from the Parser class
-    private InputStream getInputStream(String[] args) {
-        return parser.getInputStream(args);
+        if (args.length < 2) {
+            InputStream stream = Game.class.getResourceAsStream("default.json");
+            adventure = generateAdventure(loadAdventureJson(stream));
+        } else {
+            switch (args[0]) {
+                case "-l":
+                    adventure = deserializeAdventure(args[1]);
+                    break;
+                case "-a":
+                    adventure = generateAdventure(loadAdventureJson(args[1]));
+                    break;
+            }
+        }
     }
 
     // Follows the command from user input
@@ -90,11 +110,11 @@ public final class Game {
         return true;
     }
 
-    private Command getInputCommand() {
+    private Command getInputCommand() throws InvalidCommandException {
         try {
             return parser.parseUserInput(parser.getLine());
         } catch (InvalidCommandException e) {
-            return null;
+            throw new InvalidCommandException();
         }
     }
 
@@ -106,13 +126,58 @@ public final class Game {
     }
 
     private void promptSave() {
-        System.out.printf("Would you like to save?");
-        parser.getLine();
+        System.out.printf("Would you like to save? (y/n)");
+        while (true) {
+            String input = parser.getLine();
+            switch (input) {
+                case "n":
+                    return;
+                case "y":
+                    System.out.println("What would like to name your save file?");
+                    serializeAdventure();
+                    return;
+                default:
+                    System.out.println("Invalid ");
+            }
+        }
+    }
 
+    // Saves a contents of the game to the file
+    private void save() {
+
+    }
+
+    // Creates a save file for the adventure
+    private void serializeAdventure() {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(defaultFileName);
+            ObjectOutputStream outputDest = new ObjectOutputStream(outputStream);
+            outputDest.writeObject(adventure);
+            outputDest.close();
+            outputStream.close();
+
+            System.out.println("File was saved.");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private Adventure deserializeAdventure(String path) {
+        Adventure adventureObj = null;
+        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(defaultFileName))) {
+            adventureObj = (Adventure) input.readObject();
+
+            System.out.println("Welcome back " + adventureObj.getPlayer().getName() + ".");
+        } catch (Exception e) {
+            adventureObj = null;
+            System.out.println(e.getMessage());
+        }
+
+        return adventureObj;
     }
 
     @Override
     public String toString() {
-        return null;
+        return adventure.toString();
     }
 }
