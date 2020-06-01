@@ -173,7 +173,7 @@ public final class Adventure implements Serializable {
 
     // Looks at the contents of the current room
     private String lookAtCurrentRoom() {
-        return getCurrentRoom().getLongDescription() + "\n" + getCurrentRoom().toString();
+        return getCurrentRoom().getShortDescription() + "\n" + getCurrentRoom().toString();
     }
 
     // Reads the toString method of a specified item

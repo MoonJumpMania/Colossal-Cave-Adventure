@@ -20,7 +20,6 @@ public final class Player implements Serializable {
     /**
      * Constructor with name and initial room as input.
      * @param n Name of player.
-     * @param curRoom Current room.
      */
     public Player(String n) {
         name = n;

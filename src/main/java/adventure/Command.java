@@ -16,7 +16,7 @@ public final class Command {
     /**
      * A List of all valid actions.
      */
-    private static final String[] commands =
+    public static final String[] commands =
             {
                     "go",
                     "look",

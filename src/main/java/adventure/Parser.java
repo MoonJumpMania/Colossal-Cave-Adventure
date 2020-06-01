@@ -6,8 +6,6 @@ import java.util.Scanner;
  * @author Nasif Mauthoor
  */
 public final class Parser {
-    private Scanner scanner;
-
     /**
      * Default constructor.
      */
@@ -33,5 +31,10 @@ public final class Parser {
         }
 
         return command;
+    }
+
+    @Override
+    public String toString() {
+        return "This is a parser";
     }
 }

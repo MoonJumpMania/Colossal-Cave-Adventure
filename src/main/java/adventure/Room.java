@@ -11,7 +11,6 @@ public final class Room implements Serializable {
     private static final long serialVersionUID = 1477531730760186040L;
 
     /* you will need to add some private member variables */
-    private Adventure adventure;
     private String name;
     private String shortDescription;
     private String longDescription;
@@ -28,8 +27,11 @@ public final class Room implements Serializable {
         name = new String();
         shortDescription = new String();
         longDescription = new String();
+        id = 0;
         entranceMap = new HashMap<>();
         lootList = new ArrayList<>();
+        adventureItemList = new ArrayList<>();
+        adventureRoomList = new ArrayList<>();
     }
 
     /**
@@ -56,13 +58,9 @@ public final class Room implements Serializable {
     /* required public methods */
 
     /**
-     * Prints all items in room and returns the list of items.
      * @return list of items in this instance
      */
     public ArrayList<Item> listItems(){
-        for (Item item: lootList) {
-            System.out.println(item);
-        }
         return lootList;
     }
 
@@ -103,6 +101,9 @@ public final class Room implements Serializable {
      * @return Room in given direction.
      */
     public Room getConnectedRoom(String direction) {
+        if (entranceMap.get(direction) == null) {
+            return null;
+        }
         return getRoomFromID(entranceMap.get(direction));
     }
 
@@ -177,11 +178,28 @@ public final class Room implements Serializable {
         lootList.add(item);
     }
 
+
+    public void addEntrance(String dir, long roomID) {
+        entranceMap.putIfAbsent(dir, roomID);
+    }
+
     /**
      * @param roomName Name of this room.
      */
     public void setName(String roomName) {
         name = roomName;
+    }
+
+    /**
+     * Set id of this room.
+     * @param roomID id given to this room.
+     */
+    public void setID(long roomID) {
+        id = roomID;
+    }
+
+    public void addToList(Room room) {
+        adventureRoomList.add(room);
     }
 
     /**

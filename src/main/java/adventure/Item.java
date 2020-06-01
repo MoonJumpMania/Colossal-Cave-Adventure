@@ -97,8 +97,7 @@ public final class Item implements Serializable {
     @Override
     public String toString() {
         return String.format("Item Name: %s\n" +
-                "Description: %s\n" +
-                "Containing room: %s\n",
-                name, description, containingRoom.getName());
+                "Description: %s\n",
+                name, description);
     }
 }

@@ -9,6 +9,7 @@ public final class Game {
     private final Parser parser = new Parser();
     private Scanner scanner = new Scanner(System.in);
     private Adventure adventure;
+    private String playerName;
 
     /**
      * @param args -a/-l flag, filename or no arguments
@@ -72,7 +73,7 @@ public final class Game {
         if (obj == null) {
             return null;
         }
-        return new Adventure((JSONObject) obj.get("adventure"));
+        return new Adventure(playerName, (JSONObject) obj.get("adventure"));
     }
 
     public void setAdventure(String[] args) {
@@ -87,7 +88,7 @@ public final class Game {
                     break;
                 case "-a":
                     adventure = generateAdventure(loadAdventureJson(args[1]));
-                    String playerName = promptUsername();
+                    playerName = promptUsername();
                     adventure.setPlayerName(playerName);
                     break;
             }
