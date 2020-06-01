@@ -20,7 +20,7 @@ public final class Parser {
      * @throws InvalidCommandException invalid command
      */
     public Command parseUserInput(String input) throws InvalidCommandException {
-        String[] inputs = scanner.nextLine().split(" ", 2);
+        String[] inputs = scanner.nextLine().trim().split(" ", 2);
         Command command;
 
         switch (inputs.length) {

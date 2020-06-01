@@ -7,7 +7,6 @@ import java.util.ArrayList;
 public final class Item implements Serializable {
     private static final long serialVersionUID = 465506458325891352L;
 
-    private Adventure currentAdventure;
     private String name;
     private String description;
     private Room containingRoom;
@@ -18,7 +17,6 @@ public final class Item implements Serializable {
      * Default constructor
      */
     public Item() {
-        currentAdventure = new Adventure();
         name = new String();
         description = new String();
         containingRoom = new Room();
@@ -44,7 +42,7 @@ public final class Item implements Serializable {
     public Item(ArrayList<Item> itemList, Room roomObj, JSONObject itemJSON) {
         containingRoom = roomObj;
         id = (long) itemJSON.get("id");
-
+        adventureItemList = itemList;
         setItemFromTemplate();
     }
 
@@ -54,7 +52,8 @@ public final class Item implements Serializable {
     public void setItemFromTemplate() {
         for (Item item:adventureItemList) {
             if (item.id == id) {
-                
+                name = item.name;
+                description = item.description;
             }
         }
     }

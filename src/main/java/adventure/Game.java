@@ -16,8 +16,9 @@ public final class Game {
         boolean isQuit = false; // Checks if the player wants to quit
 
         theGame.setAdventure(args); // Creates adventure
-        String playerName = theGame.promptUsername();
-        theGame.adventure.setPlayerName(playerName);
+        if (theGame.adventure == null) {
+            System.exit(-1);
+        }
 
         do {
             System.out.println(theGame.adventure.getCurrentRoom());
@@ -41,7 +42,7 @@ public final class Game {
         try (InputStreamReader reader = new InputStreamReader(inputStream)) {
             return (JSONObject) new JSONParser().parse(reader);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("File does not exist.");
             return null;
         }
     }
@@ -74,8 +75,9 @@ public final class Game {
 
     public void setAdventure(String[] args) {
         if (args.length < 2) {
-            InputStream stream = Game.class.getResourceAsStream("default.json");
+            InputStream stream = Game.class.getResourceAsStream("/default.json");
             adventure = generateAdventure(loadAdventureJson(stream));
+            promptUsername();
         } else {
             switch (args[0]) {
                 case "-l":
@@ -83,6 +85,8 @@ public final class Game {
                     break;
                 case "-a":
                     adventure = generateAdventure(loadAdventureJson(args[1]));
+                    String playerName = promptUsername();
+                    adventure.setPlayerName(playerName);
                     break;
             }
         }
@@ -121,7 +125,7 @@ public final class Game {
     private String promptUsername() {
         System.out.println("What is your name?");
         String name = parser.getLine();
-        System.out.printf("Your name is %s.\n", name);
+        System.out.printf("Your name is %s.\n\n", name);
         return name;
     }
 

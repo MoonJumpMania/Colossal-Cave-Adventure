@@ -153,9 +153,11 @@ public final class Room implements Serializable {
      * Adds items from the JSON file into the array list.
      */
     public void setLootList(JSONArray itemArray) {
-        for (Object obj:itemArray) {
-            JSONObject itemJSON = (JSONObject) obj;
-            lootList.add(new Item(adventureItemList, this,itemJSON));
+        if (itemArray != null) {
+            for (Object obj : itemArray) {
+                JSONObject itemJSON = (JSONObject) obj;
+                lootList.add(new Item(adventureItemList, this, itemJSON));
+            }
         }
     }
 
@@ -194,7 +196,7 @@ public final class Room implements Serializable {
                 output = output + "\n" + item.toString();
             }
         }
-        output = output + "\n" + getEntranceMap();
+        output = output + "\n" + "Entrances:" + "\n" + getEntranceMap();
         return output;
     }
 }
