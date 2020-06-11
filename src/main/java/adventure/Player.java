@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Player's data.
- * Contains the player's inventory, save name and
+ * Contains the player's inventory, save name and info about the player.
  * @author Nasif Mauthoor | ID: 1083611
  */
 public final class Player implements Serializable {

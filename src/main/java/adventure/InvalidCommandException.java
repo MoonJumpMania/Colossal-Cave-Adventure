@@ -1,8 +1,8 @@
 package adventure;
 
 /**
- * @author Nasif Mauthoor
  * Exception class for providing an invalid command into the Command class.
+ * @author Nasif Mauthoor
  */
 public class InvalidCommandException extends Exception {
     /**

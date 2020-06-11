@@ -4,6 +4,13 @@ import org.json.simple.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Adventure data.
+ * All information of rooms and items contained within this adventure.
+ * Contains the player's data as well.
+ * @author Nasif Mauthoor | ID: 1083611
+ */
+
 public final class Adventure implements Serializable {
     private static final long serialVersionUID = 7116032258125813447L;
 

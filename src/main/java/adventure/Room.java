@@ -1,12 +1,16 @@
 package adventure;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Room's data.
+ * Contains the information about this room instance.
+ * @author Nasif Mauthoor | ID: 1083611
+ */
 public final class Room implements Serializable {
     private static final long serialVersionUID = 1477531730760186040L;
 

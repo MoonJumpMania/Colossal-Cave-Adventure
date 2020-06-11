@@ -22,7 +22,7 @@ mvn exec:java
 
 ### Checkstyle
 ```
-mvn checkstyle:checkstule
+mvn checkstyle:checkstyle
 ```
 
 ### Junit testing
