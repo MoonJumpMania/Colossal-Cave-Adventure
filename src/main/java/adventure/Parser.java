@@ -1,8 +1,7 @@
 package adventure;
-import java.io.InputStream;
-import java.util.Scanner;
 
 /**
+ * Parser class that manages commands.
  * @author Nasif Mauthoor
  */
 public final class Parser {
@@ -13,9 +12,12 @@ public final class Parser {
     }
 
     /**
-     * @throws InvalidCommandException invalid command
+     * Takes a user input and computes it as a command.
+     * @param input Command given by the user.
+     * @throws InvalidCommandException When user inputs an invalid command.
+     * @return The parsed command.
      */
-    public Command parseUserInput(String input) throws InvalidCommandException {
+    public Command parseUserCommand(String input) throws InvalidCommandException {
         String[] inputs = input.trim().split(" ", 2);
         Command command;
 
@@ -33,8 +35,20 @@ public final class Parser {
         return command;
     }
 
+    /**
+     * Outputs a list of all commands.
+     * @return A string of each command in the command class.
+     */
+    public String allCommands() {
+        String output = "Commands:";
+        for (String command:Command.COMMANDS) {
+            output = output + "\n" + command;
+        }
+        return output;
+    }
+
     @Override
     public String toString() {
-        return "This is a parser";
+        return allCommands();
     }
 }

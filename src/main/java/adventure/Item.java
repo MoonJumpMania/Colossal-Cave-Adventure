@@ -1,8 +1,6 @@
 package adventure;
 import org.json.simple.JSONObject;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public final class Item implements Serializable {
     private static final long serialVersionUID = 465506458325891352L;
@@ -11,7 +9,6 @@ public final class Item implements Serializable {
     private String description;
     private Room containingRoom;
     private long id;
-    private ArrayList<Item> adventureItemList;
 
     /**
      * Default constructor
@@ -35,14 +32,12 @@ public final class Item implements Serializable {
 
     /**
      * Constructor for items that belong to a room.
-     * @param itemList adventure instance
      * @param roomObj room containing this instance
      * @param itemJSON json with information for this instance
      */
-    public Item(ArrayList<Item> itemList, Room roomObj, JSONObject itemJSON) {
+    public Item(Room roomObj, JSONObject itemJSON) {
         containingRoom = roomObj;
         id = (long) itemJSON.get("id");
-        adventureItemList = itemList;
         setItemFromTemplate();
     }
 
@@ -50,12 +45,9 @@ public final class Item implements Serializable {
      *
      */
     public void setItemFromTemplate() {
-        for (Item item:adventureItemList) {
-            if (item.id == id) {
-                name = item.name;
-                description = item.description;
-            }
-        }
+        Item template = containingRoom.getAdventure().getItemFromID(id);
+        name = template.getName();
+        description = template.getLongDescription();
     }
 
     /* required public methods */
@@ -89,6 +81,38 @@ public final class Item implements Serializable {
         return id;
     }
 
+    /**
+     * Mutator for name.
+     * @param n New name.
+     */
+    public void setName(String n) {
+        name = n;
+    }
+
+    /**
+     * Mutator for description.
+     * @param d New description.
+     */
+    public void setDescription(String d) {
+        description = d;
+    }
+
+    /**
+     * Mutator for containingRoom.
+     * @param cr New containingRoom.
+     */
+    public void setContainingRoom(Room cr) {
+        containingRoom = cr;
+    }
+
+    /**
+     * Mutator for id.
+     * @param itemID New ID.
+     */
+    public void setId(long itemID) {
+        id = itemID;
+    }
+
     /* you may wish to add some helper methods*/
 
     /**
@@ -96,8 +120,7 @@ public final class Item implements Serializable {
      */
     @Override
     public String toString() {
-        return String.format("Item Name: %s\n" +
-                "Description: %s\n",
+        return String.format("Item Name: %s\nDescription: %s",
                 name, description);
     }
 }

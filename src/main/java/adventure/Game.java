@@ -1,30 +1,46 @@
 package adventure;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Scanner;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+/**
+ * Main class of this game.
+ * @author Nasif Mauthoor
+ * ID: 1083611
+ */
 public final class Game {
     private final Parser parser = new Parser();
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
+
     private Adventure adventure;
     private String playerName;
 
     /**
-     * @param args -a/-l flag, filename or no arguments
+     * Main method.
+     * @param args Command line arguments.
      */
     public static void main(String[] args) {
         Game theGame = new Game();
-        boolean isQuit = false; // Checks if the player wants to quit
 
         theGame.setAdventure(args); // Creates adventure
         if (theGame.adventure == null) {
-            System.exit(-1);
+            System.out.println("Invalid JSON file.");
+            return;
         }
 
+        boolean isQuit = false; // Checks if the player wants to quit
         while (!isQuit) {
-            System.out.println("\n" + theGame.adventure.getCurrentRoom());
+            System.out.println("\nCurrent room: " + theGame.adventure.getCurrentRoom().getName()
+                    + theGame.adventure.getCurrentRoom().displayItems());
             try {
                 Command command = theGame.getInputCommand(theGame.getLine());
                 isQuit = !theGame.followCommand(command);
@@ -73,26 +89,46 @@ public final class Game {
         if (obj == null) {
             return null;
         }
+        playerName = promptUsername();
         return new Adventure(playerName, (JSONObject) obj.get("adventure"));
     }
 
+    /**
+     * Gets adventure from command line arguments.
+     * Will take a flag and a filename or neither.
+     * If no flag is entered, the default file will load.
+     * Flags:
+     *      -a: Loads adventure from a save file.
+     *      -l: Loads adventure from a json file.
+     *      No flag: Loads adventure from default.json in the resources directory.
+     * @param args Arguments from main.
+     */
     public void setAdventure(String[] args) {
         if (args.length < 2) {
             InputStream stream = Game.class.getResourceAsStream("/default.json");
             adventure = generateAdventure(loadAdventureJson(stream));
-            promptUsername();
         } else {
             switch (args[0]) {
                 case "-l":
                     adventure = deserializeAdventure(args[1]);
                     break;
                 case "-a":
-                    adventure = generateAdventure(loadAdventureJson(args[1]));
-                    playerName = promptUsername();
-                    adventure.setPlayerName(playerName);
+                    adventure = createNewAdventure(args[1]);
                     break;
+                default:
             }
         }
+    }
+
+    // Creates a new adventure from given json file.
+    private Adventure createNewAdventure(String fileName) {
+        Adventure newAdventure;
+        newAdventure = generateAdventure(loadAdventureJson(fileName));
+        if (newAdventure == null) {
+            return null;
+        }
+        newAdventure.setPlayerName(playerName);
+        return newAdventure;
     }
 
     // Follows the command from user input
@@ -113,13 +149,14 @@ public final class Game {
                 break;
             case "quit":
                 return false;
+            default:
         }
         return true;
     }
 
     private Command getInputCommand(String input) throws InvalidCommandException {
         try {
-            return parser.parseUserInput(input);
+            return parser.parseUserCommand(input);
         } catch (InvalidCommandException e) {
             throw new InvalidCommandException();
         }
@@ -139,12 +176,18 @@ public final class Game {
 
     private void promptSave() {
         System.out.println("Would you like to save? (y/n)");
+
         while (true) {
             String input = getLine();
             switch (input) {
                 case "n":
                     return;
                 case "y":
+                    if (!adventure.getSaveName().isEmpty()) {
+                        serializeAdventure(adventure.getSaveName());
+                        return;
+                    }
+
                     System.out.println("What would like to name your save file?");
                     serializeAdventure(getLine());
                     return;
@@ -174,13 +217,16 @@ public final class Game {
         try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(saveName))) {
             adventureObj = (Adventure) input.readObject();
 
-            System.out.println("Welcome back " + adventureObj.getPlayer().getName() + ".");
+            System.out.println("Welcome back " + adventureObj.getPlayerName() + ".");
         } catch (Exception e) {
             adventureObj = null;
-            System.out.println(e.getMessage());
         }
 
         return adventureObj;
+    }
+
+    // Keeps asking user for inputs until they quit
+    private void loopInput() {
     }
 
     @Override

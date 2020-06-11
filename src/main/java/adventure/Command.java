@@ -1,32 +1,26 @@
 package adventure;
 
-/* TODO add a static data structure or another enum class
-that lists all the valid commands.  Then add methods for validating
-commands 
-
-You may add other methods to this class if you wish*/
-
-import java.util.ArrayList;
-
+/**
+ * Command handling class.
+ * @author Nasif Mauthoor
+ */
 public final class Command {
-    private String action;
+    private String actionWord;
     private String noun;
-    private ArrayList<Item> itemList;
 
     /**
      * A List of all valid actions.
      */
-    public static final String[] commands =
-            {
-                    "go",
-                    "look",
-                    "quit",
-                    "take",
-                    "inventory",
-            };
+    public static final String[] COMMANDS = {
+            "go",
+            "look",
+            "quit",
+            "take",
+            "inventory",
+    };
 
   /**
-     * Create a command object with default values.  
+     * Create a command object with default values.
      * both instance variables are set to null.
      */
     public Command() throws InvalidCommandException {
@@ -36,7 +30,7 @@ public final class Command {
   /**
      * Create a command object given only an action.  this.noun is set to null
      *
-     * @param command The first word of the command. 
+     * @param command The first word of the command.
      *
      */
     public Command(String command) throws InvalidCommandException {
@@ -46,45 +40,25 @@ public final class Command {
     /**
      * Create a command object given both an action and a noun
      *
-     * @param command The first word of the command. 
-     * @param what      The second word of the command.
+     * @param command The first word of the command.
+     * @param what The second word of the command.
      */
     public Command(String command, String what) throws InvalidCommandException {
         if (!isValidCommand(command, what)) {
             throw new InvalidCommandException();
         }
 
-        this.action = command;
+        this.actionWord = command;
         this.noun = what;
-    }
-
-    private boolean isValidCommand(String command, String what) {
-        switch (command) {
-            case "go":
-                return isValidDir(what);
-            case "look": case "take":
-                if (what != null) {
-                    if (what.isEmpty()) {
-                        return false;
-                    }
-                }
-                return true;
-            case "inventory": case "quit":
-                if (what == null) {
-                    return true;
-                }
-        }
-        return false;
     }
 
     /**
      * Return the command word (the first word) of this command. If the
      * command was not understood, the result is null.
-     *
      * @return The command word.
      */
     public String getActionWord() {
-        return this.action;
+        return this.actionWord;
     }
 
     /**
@@ -96,6 +70,23 @@ public final class Command {
     }
 
     /**
+     * Mutator for actionWord.
+     * @param aw New action word.
+     */
+    public void setActionWord(String aw) {
+        actionWord = aw;
+    }
+
+    /**
+     * Mutator for noun.
+     * @param n New noun.
+     */
+    public void setNoun(String n) {
+        noun = n;
+    }
+
+    /**
+     * Checks if the command has a second word.
      * @return true if the command has a second word.
      */
     public boolean hasSecondWord() {
@@ -103,24 +94,45 @@ public final class Command {
     }
 
     /**
-     *
-     * @return
+     * Displays a list of all commands.
+     * @return A string with the names of each valid command.
      */
     public String allCommands() {
         String output = "Commands:";
-        for (String command:commands) {
+        for (String command: COMMANDS) {
             output = output + "\n" + command;
         }
         return output;
     }
 
     /**
-     * Overrided toString method.
+     * Overridden toString method.
      * @return Command on two separate lines.
      */
     @Override
     public String toString() {
-        return String.format("Action: %s\nNoun: %s", action, noun);
+        return String.format("Action: %s\nNoun: %s", actionWord, noun);
+    }
+
+
+    /* Private methods */
+
+    // Checks if command is valid
+    private boolean isValidCommand(String command, String what) throws InvalidCommandException {
+        try {
+            switch (command) {
+                case "go":
+                    return isValidDir(what);
+                case "look": case "take":
+                    return (what != null) ? !what.isEmpty() : true;
+                case "inventory": case "quit":
+                    return what == null;
+                default:
+            }
+        } catch (Exception e) {
+            throw new InvalidCommandException();
+        }
+        return false;
     }
 
     // Checks if the given direction is valid

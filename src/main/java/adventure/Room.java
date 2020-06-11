@@ -10,18 +10,19 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class Room implements Serializable {
     private static final long serialVersionUID = 1477531730760186040L;
 
-    /* you will need to add some private member variables */
+    /* Member variables */
+    private final Adventure adventure;
     private String name;
     private String shortDescription;
     private String longDescription;
     private long id;
     private HashMap<String, Long> entranceMap;
     private ArrayList<Item> lootList;
-    private ArrayList<Item> adventureItemList;
-    private ArrayList<Room> adventureRoomList;
 
+
+    /* Constructors */
     /**
-     * Default constructor
+     * Default constructor.
      */
     public Room() {
         name = new String();
@@ -30,33 +31,32 @@ public final class Room implements Serializable {
         id = 0;
         entranceMap = new HashMap<>();
         lootList = new ArrayList<>();
-        adventureItemList = new ArrayList<>();
-        adventureRoomList = new ArrayList<>();
+        adventure = new Adventure();
     }
 
     /**
-     * @param roomList
-     * @param roomJSON
+     * Takes the adventure and room json to construct the room.
+     * @param adventureObj The adventure object.
+     * @param roomJSON JSON member with information about this room.
      */
-    public Room(ArrayList<Room> roomList, ArrayList<Item> itemList, JSONObject roomJSON) {
+    public Room(Adventure adventureObj, JSONObject roomJSON) {
         name = (String) roomJSON.get("name");
         shortDescription = (String) roomJSON.get("short_description");
         longDescription = (String) roomJSON.get("long_description");
         id = (long) roomJSON.get("id");
         entranceMap = new HashMap<>();
         lootList = new ArrayList<>();
-        adventureRoomList = roomList;
-        adventureItemList = itemList;
+        adventure = adventureObj;
 
         JSONArray entranceJSON = (JSONArray) roomJSON.get("entrance");
         setEntranceMap(entranceJSON);
 
         JSONArray itemJSON = (JSONArray) roomJSON.get("loot");
-        setLootList(itemJSON);
+        createLootList(itemJSON);
     }
 
-    /* required public methods */
 
+    /* required public methods */
     /**
      * @return list of items in this instance
      */
@@ -64,12 +64,18 @@ public final class Room implements Serializable {
         return lootList;
     }
 
+
+    /* Getters */
     /**
      * Returns the name of the room.
      * @return Name of this room.
      */
     public String getName(){
         return name;
+    }
+
+    public Adventure getAdventure() {
+        return adventure;
     }
 
     /**
@@ -97,6 +103,7 @@ public final class Room implements Serializable {
     }
 
     /**
+     * Get's the room connected from it's direction.
      * @param direction one of: "N", "S", "E", "W", "up", "down"
      * @return Room in given direction.
      */
@@ -104,22 +111,39 @@ public final class Room implements Serializable {
         if (entranceMap.get(direction) == null) {
             return null;
         }
-        return getRoomFromID(entranceMap.get(direction));
-    }
-
-    private Room getRoomFromID(long roomID) {
-        if (adventureRoomList != null) {
-            for (Room room:adventureRoomList) {
-                if (room.getID() == roomID) {
-                    return room;
-                }
-            }
-        }
-        return null;
+        return adventure.getRoomFromID(entranceMap.get(direction));
     }
 
     /**
+     * Returns each entrance room that is in the hashmap.
+     * @return A string of ach room and their direction.
+     */
+    public String getEntranceMap() {
+        // Allows change to string in Stream.forEach() method
+        AtomicReference<String> output = new AtomicReference<>("");
+
+        // Goes through each hashmap entry and adds their information to the output string.
+        entranceMap.entrySet().stream().forEach(e -> {
+            output.set(output + "\n"
+                    + e.getKey() + ": "
+                    + adventure.getRoomFromID(e.getValue()).getName());
+        });
+
+        return output.get();
+    }
+
+    /**
+     * @return Getter for this room's ID.
+     */
+    public long getID() {
+        return id;
+    }
+
+
+    /* Setters */
+    /**
      * Sets the entrances of room.
+     * @param entranceArray JSONArray of each entrance of this room
      */
     public void setEntranceMap(JSONArray entranceArray) {
         for (Object obj: entranceArray) {
@@ -131,37 +155,28 @@ public final class Room implements Serializable {
     }
 
     /**
-     * Returns each entrance room that is in the hashmap.
-     */
-    public String getEntranceMap() {
-        // Allows change in forEach
-        AtomicReference<String> output = new AtomicReference<>("");
-        // Goes through each hashmap entry and adds their information to the output string.
-        entranceMap.entrySet().stream().forEach(e -> {
-            output.set(output + "\n" + e.getKey() + ": " + getRoomFromID(e.getValue()).getName());
-        });
-        return output.get();
-    }
-
-    /**
-     * @return Getter for this room's ID.
-     */
-    public long getID() {
-        return id;
-    }
-
-    /**
      * Adds items from the JSON file into the array list.
+     * @param itemArray JSONArray of each item in this room.
      */
-    public void setLootList(JSONArray itemArray) {
+    public void createLootList(JSONArray itemArray) {
         if (itemArray != null) {
             for (Object obj : itemArray) {
                 JSONObject itemJSON = (JSONObject) obj;
-                lootList.add(new Item(adventureItemList, this, itemJSON));
+                lootList.add(new Item(this, itemJSON));
             }
         }
     }
 
+    /**
+     * Set id of this room.
+     * @param roomID id given to this room.
+     */
+    public void setID(long roomID) {
+        id = roomID;
+    }
+
+
+    /*  */
     /**
      * Add item to this room's list of items.
      * @param item Item that will be removed from this room's list.
@@ -178,43 +193,79 @@ public final class Room implements Serializable {
         lootList.add(item);
     }
 
-
+    /**
+     * Adds an entrance to the hashmap.
+     * @param dir Direction of the room from the current room.
+     * @param roomID ID of the room in the given direction.
+     */
     public void addEntrance(String dir, long roomID) {
         entranceMap.putIfAbsent(dir, roomID);
     }
 
     /**
+     * Mutator of this room's name.
      * @param roomName Name of this room.
      */
     public void setName(String roomName) {
         name = roomName;
     }
 
+    public String displayItems() {
+        String output = new String();
+        if (!lootList.isEmpty()) {
+            output = output + "\nItems: ";
+            for (Item item:lootList) {
+                output = output + item.getName() + " ";
+            }
+            return output;
+        }
+        return new String();
+    }
+
     /**
-     * Set id of this room.
-     * @param roomID id given to this room.
+     * @param sd New short description.
      */
-    public void setID(long roomID) {
+    public void setShortDescription(String sd) {
+        shortDescription = sd;
+    }
+
+    /**
+     * @param ld New long description.
+     */
+    public void setLongDescription(String ld) {
+        longDescription = ld;
+    }
+
+    /**
+     * @param roomID New ID.
+     */
+    public void setId(long roomID) {
         id = roomID;
     }
 
-    public void addToList(Room room) {
-        adventureRoomList.add(room);
+    /**
+     * @param em New entrance hashmap.
+     */
+    public void setEntranceMap(HashMap<String, Long> em) {
+        entranceMap = em;
     }
 
     /**
+     * @param ll New loot ArrayList.
+     */
+    public void setLootList(ArrayList<Item> ll) {
+        lootList = ll;
+    }
+
+    /**
+     * Overridden toString() method of this class.
      * @return Some formatted information about the room.
      */
     @Override
     public String toString() {
         String output = String.format("You are in: %s", name);
-        if (lootList != null) {
-           output = output + "\nItems:";
-            for (Item item : lootList) {
-                output = output + "\n" + item.toString();
-            }
-        }
-        output = output + "\n" + "Entrances:" + "\n" + getEntranceMap();
+        output = output + displayItems();
+        output = output + "\n" + "Entrances:" + getEntranceMap();
         return output;
     }
 }

@@ -1,7 +1,6 @@
 package adventure;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -28,12 +27,14 @@ public final class Adventure implements Serializable {
     }
 
     /**
-     * @param advJSON sets the adventure from the adventure json
+     * Constructor turn JSONObject into adventure.
+     * @param name Name of the player.
+     * @param advJSON JSONObject with the contents of this adventure.
      */
-    public Adventure(String n, JSONObject advJSON) {
+    public Adventure(String name, JSONObject advJSON) {
         roomList = new ArrayList<>();
         itemList = new ArrayList<>();
-        player1 = new Player(n);
+        player1 = new Player(name);
 
         setItemList((JSONArray) advJSON.get("item"));
         setRoomList((JSONArray) advJSON.get("room"));
@@ -48,30 +49,54 @@ public final class Adventure implements Serializable {
     }
 
     /**
-     * @return prints and returns list of all rooms
+     * Accessor to this adventure's list of rooms.
+     * @return A list of all rooms in this adventure.
      */
     public ArrayList<Room> listAllRooms() {
-        for (Room room:roomList) {
-            System.out.println(room);
-        }
         return roomList;
     }
 
     /**
-     * @return prints and returns list of all items
+     * @return returns list of all items
      */
     public ArrayList<Item> listAllItems() {
-        for (Item item:itemList) {
-            System.out.println(item);
-        }
         return itemList;
     }
 
     /**
-     * @return this adventure's current room
+     * Returns this adventure's current room.
+     * @return The current room.
      */
     public Room getCurrentRoom() {
         return player1.getCurrentRoom();
+    }
+
+    public String getCurrentRoomDescription() {
+        return getCurrentRoom().getLongDescription();
+    }
+
+    /**
+     * Accessor to the player's name.
+     * @return The player's name.
+     */
+    public String getPlayerName() {
+        return player1.getName();
+    }
+
+    /**
+     * Gets an item from a given ID.
+     * @param itemID ID of the wanted item.
+     * @return The wanted item.
+     */
+    public Item getItemFromID(long itemID) {
+        if (itemList != null) {
+            for (Item item:itemList) {
+                if (item.getID() == itemID) {
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 
     /* you may wish to add additional methods*/
@@ -120,11 +145,16 @@ public final class Adventure implements Serializable {
     /**
      * Takes an item from a room and places it into the player's inventory.
      * @param itemName Name of the item to be taken.
+     * @return Response message to picking up an existing item or when an item doesn't exist.
      */
     public String takeItem(String itemName) {
-        Item item = getItem(itemName);
-        player1.pickItem(item);
-        return "You grabbed a " + itemName;
+        Item item = getItemFromName(itemName);
+        if (item != null) {
+            player1.pickItem(item);
+            return "You grabbed a " + itemName;
+        } else {
+            return "Item not found.";
+        }
     }
 
     /**
@@ -134,7 +164,7 @@ public final class Adventure implements Serializable {
     public void setRoomList(JSONArray roomArray) {
         for (Object object:roomArray) {
             JSONObject roomJSON = (JSONObject) object;
-            Room newRoom = new Room(roomList, itemList, roomJSON);
+            Room newRoom = new Room(this, roomJSON);
             roomList.add(newRoom);
             if (roomJSON.get("start") != null) {
                 player1.setCurrentRoom(newRoom);
@@ -162,10 +192,26 @@ public final class Adventure implements Serializable {
      * @param itemName Name of the item.
      * @return The item with the same name.
      */
-    public Item getItem(String itemName) {
+    public Item getItemFromName(String itemName) {
         for (Item item:getCurrentRoom().getLootList()) {
             if (item.getName().equals(itemName)) {
                 return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Takes an ID and finds the room with that ID.
+     * @param roomID ID of the wanted room.
+     * @return Room with given ID.
+     */
+    public Room getRoomFromID(long roomID) {
+        if (roomList != null) {
+            for (Room room:roomList) {
+                if (room.getID() == roomID) {
+                    return room;
+                }
             }
         }
         return null;
@@ -178,7 +224,7 @@ public final class Adventure implements Serializable {
 
     // Reads the toString method of a specified item
     private String lookAtItem(String itemName) {
-        Item item = getItem(itemName);
+        Item item = getItemFromName(itemName);
         if (item != null) {
             return item.toString();
         } else {
@@ -186,12 +232,18 @@ public final class Adventure implements Serializable {
         }
     }
 
+    /**
+     * toString() method of this class to output information about adventure.
+     * @return Player and current room information.
+     */
     @Override
     public String toString() {
-        return null;
+        return String.format("Player: %s\nCurrent Room: %s",
+                player1.getName(),
+                getCurrentRoom().getName());
     }
 
-    public Player getPlayer() {
-        return player1;
+    public String getSaveName() {
+        return player1.getSaveGameName();
     }
 }

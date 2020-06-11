@@ -1,20 +1,27 @@
 package adventure;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Player's data.
+ * Contains the player's inventory, save name and
+ * @author Nasif Mauthoor | ID: 1083611
+ */
 public final class Player implements Serializable {
     private static final long serialVersionUID = 3260259094862585L;
 
+    /* Member variables */
     private String name;
+    private String saveGameName;
     private ArrayList<Item> inventory;
     private Room currentRoom;
+
 
     /**
      * Default constructor.
      */
     public Player() {
-        this(null);
+        this("name");
     }
 
     /**
@@ -24,6 +31,7 @@ public final class Player implements Serializable {
     public Player(String n) {
         name = n;
         inventory = new ArrayList<>();
+        saveGameName = new String();
     }
 
     /**
@@ -66,6 +74,10 @@ public final class Player implements Serializable {
         name = playerName;
     }
 
+    public void setInventory(ArrayList<Item> i) {
+        inventory = i;
+    }
+
     /**
      * Picks an item from the current room.
      * @param item Item to be picked up.
@@ -82,6 +94,14 @@ public final class Player implements Serializable {
     public void dropItem(Item item) {
         inventory.remove(item);
         item.getContainingRoom().addItem(item);
+    }
+
+    public String getSaveGameName() {
+        return saveGameName;
+    }
+
+    public void setSaveGameName(String s) {
+        saveGameName = s;
     }
 
     /**
