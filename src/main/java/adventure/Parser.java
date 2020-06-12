@@ -19,20 +19,16 @@ public final class Parser {
      */
     public Command parseUserCommand(String input) throws InvalidCommandException {
         String[] inputs = input.trim().split(" ", 2);
-        Command command;
 
-        switch (inputs.length) {
-            case 1:
-                command = new Command(inputs[0]);
-                break;
-            case 2:
-                command = new Command(inputs[0], inputs[1]);
-                break;
-            default:
-                command = new Command(null, null);
+        if (inputs.length == 1) {
+            return new Command(inputs[0]);
+
+        } else if (inputs.length == 2) {
+            return new Command(inputs[0], inputs[1]);
+
+        } else {
+            return new Command(null, null);
         }
-
-        return command;
     }
 
     /**
@@ -40,11 +36,11 @@ public final class Parser {
      * @return A string of each command in the command class.
      */
     public String allCommands() {
-        String output = "Commands:";
+        StringBuilder output = new StringBuilder("Commands:");
         for (String command:Command.COMMANDS) {
-            output = output + "\n" + command;
+            output.append("\n").append(command);
         }
-        return output;
+        return output.toString();
     }
 
     @Override

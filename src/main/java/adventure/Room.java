@@ -52,6 +52,10 @@ public final class Room implements Serializable {
         lootList = new ArrayList<>();
         adventure = adventureObj;
 
+        setJSONArrays(roomJSON);
+    }
+
+    private void setJSONArrays(JSONObject roomJSON) {
         JSONArray entranceJSON = (JSONArray) roomJSON.get("entrance");
         setEntranceMap(entranceJSON);
 

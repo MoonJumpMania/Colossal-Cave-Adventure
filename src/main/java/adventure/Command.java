@@ -118,19 +118,15 @@ public final class Command {
     /* Private methods */
 
     // Checks if command is valid
-    private boolean isValidCommand(String command, String what) throws InvalidCommandException {
-        try {
-            switch (command) {
-                case "go":
-                    return isValidDir(what);
-                case "look": case "take":
-                    return (what != null) ? !what.isEmpty() : true;
-                case "inventory": case "quit":
-                    return what == null;
-                default:
-            }
-        } catch (Exception e) {
-            throw new InvalidCommandException();
+    private boolean isValidCommand(String command, String what) {
+        switch (command) {
+            case "go":
+                return isValidDir(what);
+            case "look": case "take":
+                return (what != null) ? !what.isEmpty() : true;
+            case "inventory": case "quit":
+                return what == null;
+            default:
         }
         return false;
     }
