@@ -10,6 +10,8 @@ import java.io.Serializable;
 public class Item implements Serializable {
     private static final long serialVersionUID = 465506458325891352L;
 
+    /* Member variables */
+
     private String name;
     private String description;
     private Room containingRoom;
@@ -37,8 +39,8 @@ public class Item implements Serializable {
 
     /**
      * Constructor for items that belong to a room.
-     * @param roomObj room containing this instance
-     * @param itemJSON json with information for this instance
+     * @param roomObj The room containing this item.
+     * @param itemJSON JSONObject that contains the id of this item.
      */
     public Item(Room roomObj, JSONObject itemJSON) {
         containingRoom = roomObj;

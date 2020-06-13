@@ -1,9 +1,11 @@
 package adventure.item;
+import adventure.Room;
 import org.json.simple.JSONObject;
 
 public class Spell extends Item implements Readable {
 
     /* Constructors */
+
     /**
      * Default constructor.
      */
@@ -13,21 +15,25 @@ public class Spell extends Item implements Readable {
 
     /**
      * Parses JSONObject into Spell instance.
+     * @param room The room this spell resides in.
      * @param object JSONObject with all information
      *               about this Spell instance.
      */
-    public Spell(JSONObject object) {
-        // TODO
+    public Spell(Room room, JSONObject object) {
+        super(room, object);
     }
 
 
     /* Overridden methods */
+
     /**
-     * TODO
+     * Tells the user that they read this spell.
      * @return Read message.
      */
     @Override
     public String read() {
-        return null;
+        return "You read "
+                + super.getName()
+                + ". You feel enlightened.";
     }
 }
