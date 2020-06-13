@@ -1,4 +1,5 @@
 package adventure;
+import adventure.item.Item;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.io.Serializable;
@@ -218,6 +219,10 @@ public final class Room implements Serializable {
         name = roomName;
     }
 
+    /**
+     * Gets a formatted string of all items in this room.
+     * @return String containing the names of each item in the room.
+     */
     public String displayItems() {
         String output = new String();
         if (!lootList.isEmpty()) {
@@ -231,6 +236,7 @@ public final class Room implements Serializable {
     }
 
     /**
+     * Setter for shortDescription.
      * @param sd New short description.
      */
     public void setShortDescription(String sd) {
@@ -238,6 +244,7 @@ public final class Room implements Serializable {
     }
 
     /**
+     * Setter for longDescription.
      * @param ld New long description.
      */
     public void setLongDescription(String ld) {
@@ -245,6 +252,7 @@ public final class Room implements Serializable {
     }
 
     /**
+     * Setter for the ID.
      * @param roomID New ID.
      */
     public void setId(long roomID) {
@@ -252,6 +260,7 @@ public final class Room implements Serializable {
     }
 
     /**
+     * Setter for the entrance hashmap.
      * @param em New entrance hashmap.
      */
     public void setEntranceMap(HashMap<String, Long> em) {
@@ -259,6 +268,7 @@ public final class Room implements Serializable {
     }
 
     /**
+     * Setter for the loot list.
      * @param ll New loot ArrayList.
      */
     public void setLootList(ArrayList<Item> ll) {

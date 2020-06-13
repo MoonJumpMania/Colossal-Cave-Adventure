@@ -1,4 +1,6 @@
 package adventure;
+import adventure.item.Item;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
