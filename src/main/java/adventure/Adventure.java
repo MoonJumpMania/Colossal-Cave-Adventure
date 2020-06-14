@@ -240,6 +240,10 @@ public final class Adventure implements Serializable {
         }
     }
 
+    public String eatItem(String noun) {
+        return player1.eatItem(noun);
+    }
+
     /**
      * toString() method of this class to output information about adventure.
      * @return Player and current room information.
@@ -254,4 +258,5 @@ public final class Adventure implements Serializable {
     public String getSaveName() {
         return player1.getSaveGameName();
     }
+
 }

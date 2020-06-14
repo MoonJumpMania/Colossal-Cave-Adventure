@@ -161,10 +161,25 @@ public final class Game {
     }
 
     private void followCommand(Command command) {
-        if (command.hasSecondWord()) {
+        if (isAnInterfaceMethod(command.getActionWord())) {
+            runInterfaceMethod(command);
+        }
+        else if (command.hasSecondWord()) {
             runTwoWordCommand(command);
         } else {
             runOneWordCommand(command);
+        }
+    }
+
+    private void runInterfaceMethod(Command command) {
+        if ("eat".equals(command.getActionWord())) {
+            adventure.eat(command.getNoun());
+        } else if ("wear".equals(command.getActionWord())) {
+            adventure.wear(command.getNoun());
+        } else if ("toss".equals(command.getActionWord())) {
+            adventure.toss(command.getNoun());
+        } else if ("read".equals(command.getActionWord())) {
+            adventure.read(command.getNoun());
         }
     }
 
@@ -189,6 +204,15 @@ public final class Game {
 
         } else if (command.getActionWord().equals("look")) {
             System.out.println(adventure.lookAt(command.getNoun()));
+        }
+    }
+
+    private boolean isAnInterfaceMethod(String action) {
+        switch (action) {
+            case "eat": case "wear": case "toss": case "read":
+                return true;
+            default:
+                return false;
         }
     }
 

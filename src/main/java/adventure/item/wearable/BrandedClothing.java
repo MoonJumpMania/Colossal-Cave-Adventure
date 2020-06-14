@@ -5,6 +5,30 @@ import org.json.simple.JSONObject;
 
 public class BrandedClothing extends Clothing implements Readable {
 
+    /* Member variables */
+
+    private String brandName;
+
+
+    /* Setters and getters */
+
+    /**
+     * Getter for the brand name.
+     * @return The brand name of this apparel.
+     */
+    public String getBrandName() {
+        return brandName;
+    }
+
+    /**
+     * Setter for the brand name.
+     * @param bn New brand name of this item.
+     */
+    public void setBrandName(String bn) {
+        brandName = bn;
+    }
+
+
     /* Constructors */
 
     /**
@@ -33,8 +57,9 @@ public class BrandedClothing extends Clothing implements Readable {
      */
     @Override
     public String read() {
-        return "You read "
+        return "The brand name of "
                 + super.getName()
-                + "'s brand name.";
+                + " is"
+                + brandName;
     }
 }

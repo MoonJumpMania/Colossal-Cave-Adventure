@@ -6,6 +6,7 @@ import java.io.Serializable;
 /**
  * Item class.
  * @author Nasif Mauthoor | ID: 1083611
+ *
  */
 public class Item implements Serializable {
     private static final long serialVersionUID = 465506458325891352L;
